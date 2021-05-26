@@ -48,19 +48,24 @@ fn main() {
 
 fn brute_force(chars: usize, expected: [u8; 16]) {
     let start = Instant::now();
-    for p in permutations(&CHARS[..], chars) {
+
+    let p = permutations(&CHARS[..], chars).par_bridge().find_any(|p| {
         if expected == whirlpool::core::hash(p.clone()) {
+            true
+        } else {
+            false
+        }
+    });
+    match p {
+        None => panic!("Did not find any input"),
+        Some(x) => {
             let duration = start.elapsed();
             println!(
                 "Found answer for {:?}, it is {:?}. Took {:?}",
                 expected,
-                p.iter()
-                    .par_bridge()
-                    .map(|x| char::from(x.clone()))
-                    .collect::<Vec<char>>(),
+                String::from_utf8(x.clone()),
                 duration
             );
-            return;
         }
     }
 }
