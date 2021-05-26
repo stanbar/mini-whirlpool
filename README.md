@@ -21,7 +21,7 @@ echo -n <some input> | cargo run
 
 ## Example
 
-Finding the reverse of a hash
+Finding the reverses of some hashes
 
 ```
 cargo run --bin reverse-hash
