@@ -24,5 +24,5 @@ echo -n <some input> | cargo run
 Finding the reverses of some hashes
 
 ```
-cargo run --bin reverse-hash
+cargo run --bin reverse-hash --release
 ```
