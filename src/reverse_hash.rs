@@ -1,14 +1,8 @@
 use rayon::prelude::*;
 use std::time::Instant;
 
-const CHARS: &[u8] = &[
-    b'q', b'w', b'e', b'r', b't', b'y', b'u', b'i', b'o', b'p', b'a', b's', b'd', b'f', b'g', b'h',
-    b'j', b'k', b'l', b'z', b'x', b'c', b'v', b'b', b'n', b'm', b'Q', b'W', b'E', b'R', b'T', b'Y',
-    b'U', b'I', b'O', b'P', b'A', b'S', b'D', b'F', b'G', b'H', b'J', b'K', b'L', b'Z', b'X', b'C',
-    b'V', b'B', b'N', b'M', b'1', b'2', b'3', b'4', b'5', b'6', b'7', b'8', b'9', b'0', b'!', b'@',
-    b'#', b'$', b'%', b'^', b'&', b'*', b'-', b'_', b'=', b'+', b'(', b'[', b'{', b'<', b')', b']',
-    b'}', b'>', b'\'',
-];
+const CHARS: &[u8] = b"qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890!@#%^-_=+([{<)]}>";
+
 
 fn main() {
     vec![
