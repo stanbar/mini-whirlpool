@@ -42,7 +42,7 @@ fn main() {
             ],
         ),
     ]
-    .par_iter()
+    .iter()
     .for_each(|x| brute_force(x.0, x.1));
 }
 
@@ -55,6 +55,7 @@ fn brute_force(chars: usize, expected: [u8; 16]) {
                 "Found answer for {:?}, it is {:?}. Took {:?}",
                 expected,
                 p.iter()
+                    .par_bridge()
                     .map(|x| char::from(x.clone()))
                     .collect::<Vec<char>>(),
                 duration
