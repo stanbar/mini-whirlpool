@@ -48,8 +48,8 @@ fn whirlpool(h: Matrix, w: [u8; 16]) -> Matrix {
         // SB
         for i in 0..4 {
             for j in 0..4 {
-                k.0[i][j] = S(k.0[i][j]);
-                m.0[i][j] = S(m.0[i][j]);
+                k.0[i][j] = s(k.0[i][j]);
+                m.0[i][j] = s(m.0[i][j]);
             }
         }
         // SC
@@ -76,7 +76,7 @@ fn whirlpool(h: Matrix, w: [u8; 16]) -> Matrix {
 }
 
 
-fn S(a: BiPoly) -> BiPoly {
+fn s(a: BiPoly) -> BiPoly {
     // let a_inv = poly_mod_inv(a);
     // if a_inv.is_none() {
     //     panic!("failed to find modulo inverse {:?} mod {:?}", a, modulo)
