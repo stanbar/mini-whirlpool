@@ -46,10 +46,13 @@ fn main() {
     .for_each(|x| brute_force(x.0, x.1));
 }
 
-fn brute_force(chars: usize, expected: [u8; 16]) {
+fn brute_force(chars_count: usize, expected: [u8; 16]) {
     let start = Instant::now();
+    let mut chars = [0u8; 79];
+    chars.copy_from_slice(&CHARS[..]);
+    chars.reverse();
 
-    let p = permutations(&CHARS[..], chars).par_bridge().find_any(|p| {
+    let p = permutations(&chars[..], chars_count).par_bridge().find_any(|p| {
         if expected == whirlpool::core::hash(p.clone()) {
             true
         } else {
