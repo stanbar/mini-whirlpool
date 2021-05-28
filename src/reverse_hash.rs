@@ -5,6 +5,12 @@ const CHARS: &[u8] = b"qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM12345
 
 
 fn main() {
+    let args: Vec<String> = std::env::args().collect();
+    let reverse_order = match args.get(1) {
+        Some(x) => x == "--reverse",
+        None => false,
+    };
+
     vec![
         (
             2,
@@ -43,14 +49,16 @@ fn main() {
         ),
     ]
     .iter()
-    .for_each(|x| brute_force(x.0, x.1));
+    .for_each(|x| brute_force(reverse_order, x.0, x.1));
 }
 
-fn brute_force(chars_count: usize, expected: [u8; 16]) {
+fn brute_force(reverse_order: bool, chars_count: usize, expected: [u8; 16]) {
     let start = Instant::now();
     let mut chars = [0u8; 79];
     chars.copy_from_slice(&CHARS[..]);
-    // chars.reverse();
+    if reverse_order {
+        chars.reverse();
+    }
 
     let p = permutations(&chars[..], chars_count).par_bridge().find_any(|p| {
         if expected == whirlpool::core::hash(p.clone()) {
