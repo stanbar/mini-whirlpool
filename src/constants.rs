@@ -1,10 +1,10 @@
-use super::bipoly::{BiPoly, BiPoly16};
+use super::bipoly::BiPoly;
 use super::matrix::Matrix;
 
 pub const BLOCK_SIZE: usize = 16;
 pub const LENGTH_SIZE: usize = 2;
 
-pub const MODULO: BiPoly16 = BiPoly16(0b0000_0001_0010_1011);
+pub const MODULO: u16 = 0b0000_0001_0010_1011; // x^8 + x^5 + x^3 + x + 1 (0x12B)
 
 pub const R: [[BiPoly; 4]; 6] = [
     [BiPoly(0x05), BiPoly(0x8C), BiPoly(0xB5), BiPoly(0x60)],

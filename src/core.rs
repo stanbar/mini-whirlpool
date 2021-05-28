@@ -1,7 +1,7 @@
 use std::convert::TryInto;
 
 use super::matrix::Matrix;
-use super::bipoly::*;
+use super::bipoly::BiPoly;
 use super::constants::*;
 
 pub fn hash(mut input: Vec<u8>) -> [u8; 16] {
@@ -77,26 +77,10 @@ fn whirlpool(h: Matrix, w: [u8; 16]) -> Matrix {
 
 
 fn s(a: BiPoly) -> BiPoly {
-    // let a_inv = poly_mod_inv(a);
-    // if a_inv.is_none() {
-    //     panic!("failed to find modulo inverse {:?} mod {:?}", a, modulo)
-    // }
-    // let a_inv = a_inv.unwrap();
-    // TODO this should match
-    // if a.0 != 0 {
-    //     assert_eq!(a.mul(&a_inv).0, 1);
-    // }
-    // let mapping = BiPoly(0xB6)
-    //     .mulmod(&a_inv)
-    //     .add(&BiPoly(0x34))
-    //     .div16(modulo)
-    //     .1;
     let row = (a.0 >> 4) as usize;
     let col = (a.0 & 0b0000_1111) as usize;
-    // println!("S({:x}) = {:x} = <matrix>[{:x}][{:x}] = {:x}", a.0,  mapping.0, row, col, MATRIX[row][col].0);
     return MATRIX[row][col];
 }
-
 
 fn to_array(matrix: &Matrix) -> [u8; 16] {
     let flattened: Vec<u8> = matrix.0.iter().flatten().map(|x| x.0).collect();
@@ -308,21 +292,5 @@ mod tests {
                 ]
             );
         }
-    }
-
-    #[test]
-    fn test_degree() {
-        let m = BiPoly(0b00000001);
-        assert_eq!(m.degree().unwrap(), 0);
-        let m = BiPoly(0b00000011);
-        assert_eq!(m.degree().unwrap(), 1);
-        let m = BiPoly(0b11000011);
-        assert_eq!(m.degree().unwrap(), 7);
-
-        let a = BiPoly16(0b0000_0001_0000_0010);
-        assert_eq!(a.degree().unwrap(), 8);
-
-        let a = BiPoly16(0b1000_0001_0000_0010);
-        assert_eq!(a.degree().unwrap(), 15);
     }
 }

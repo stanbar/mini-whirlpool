@@ -50,7 +50,7 @@ fn brute_force(chars_count: usize, expected: [u8; 16]) {
     let start = Instant::now();
     let mut chars = [0u8; 79];
     chars.copy_from_slice(&CHARS[..]);
-    chars.reverse();
+    // chars.reverse();
 
     let p = permutations(&chars[..], chars_count).par_bridge().find_any(|p| {
         if expected == whirlpool::core::hash(p.clone()) {
@@ -64,7 +64,7 @@ fn brute_force(chars_count: usize, expected: [u8; 16]) {
         Some(x) => {
             let duration = start.elapsed();
             println!(
-                "Found answer for {:?}, it is {:?}. Took {:?}",
+                "Found the preimage for hash {:?}. It is {:?}. Took {:?}",
                 expected,
                 String::from_utf8(x.clone()),
                 duration
