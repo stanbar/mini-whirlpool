@@ -37,7 +37,7 @@ impl std::ops::Mul for Matrix {
         for i in 0..4 {
             for j in 0..4 {
                 for k in 0..4 {
-                    out.0[i][j] = self.0[i][k].mulmod(&rhs.0[k][j]).add(&out.0[i][j]);
+                    out.0[i][j] = self.0[i][k] * rhs.0[k][j] + out.0[i][j];
                 }
             }
         }
@@ -53,7 +53,7 @@ impl std::ops::Add for Matrix {
         let mut c = Matrix::zeros();
         for row in 0..4 {
             for col in 0..4 {
-                c.0[row][col] = self.0[row][col].add(&rhs.0[row][col])
+                c.0[row][col] = self.0[row][col] + rhs.0[row][col];
             }
         }
         c

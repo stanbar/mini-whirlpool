@@ -1,19 +1,21 @@
 use std::convert::TryInto;
 
-use super::matrix::Matrix;
 use super::bipoly::BiPoly;
 use super::constants::*;
+use super::matrix::Matrix;
 
 pub fn hash(mut input: Vec<u8>) -> [u8; 16] {
     add_padding(&mut input);
-    let hash = input
-        .chunks(16)
-        .fold(Matrix::zeros(), |acc, element| {
-            whirlpool(acc, element.try_into().expect("Slice with incorrect size"))
-        });
+    let hash = input.chunks(16).fold(Matrix::zeros(), |acc, element| {
+        whirlpool(acc, element.try_into().expect("Slice with incorrect size"))
+    });
     to_array(&hash)
 }
 
+/// W(K) = (o^10_r=1 RF(K_r)) o AK(K_0)
+/// Where W is the whirlpool function, K is the key input, K_r is a round key
+/// RF is a round function, K_r is a round key, AK is an add key step, MR is a mix rows,
+/// SC is a shift columns step, and SB is a substitution bytes step.
 fn whirlpool(h: Matrix, w: [u8; 16]) -> Matrix {
     let a = Matrix([
         [
@@ -42,17 +44,19 @@ fn whirlpool(h: Matrix, w: [u8; 16]) -> Matrix {
         ],
     ]);
     let mut k = h;
+
+    // AK add round key K_0 which is
     let mut m = a + h;
 
     for round in 0..6 {
-        // SB
+        // SB substitute bytes
         for i in 0..4 {
             for j in 0..4 {
                 k.0[i][j] = s(k.0[i][j]);
                 m.0[i][j] = s(m.0[i][j]);
             }
         }
-        // SC
+        // SC shift columns
         let mut k_prim = Matrix::zeros();
         let mut m_prim = Matrix::zeros();
         for i in 0..4 {
@@ -62,19 +66,18 @@ fn whirlpool(h: Matrix, w: [u8; 16]) -> Matrix {
             }
         }
 
-        // MR
+        // MR mix rows
         k = T * k_prim;
         m = T * m_prim;
 
-        // AR
+        // AK add key round constant
         for i in 0..4 {
-            k.0[0][i] = k.0[0][i].add(&R[round][i]);
+            k.0[0][i] = k.0[0][i] + R[round][i];
         }
         m = m + k;
     }
     m + a + h
 }
-
 
 fn s(a: BiPoly) -> BiPoly {
     let row = (a.0 >> 4) as usize;
@@ -135,11 +138,9 @@ mod tests {
             println!("input {:?}", input);
             add_padding(&mut input);
             println!("input after padding {:?}", input);
-            let hash = input
-                .chunks(16)
-                .fold(Matrix::zeros(), |acc, element| {
-                    whirlpool(acc, element.try_into().expect("Slice with incorrect size"))
-                });
+            let hash = input.chunks(16).fold(Matrix::zeros(), |acc, element| {
+                whirlpool(acc, element.try_into().expect("Slice with incorrect size"))
+            });
             let expected = [
                 0x67, 0x2F, 0xAE, 0x13, 0xF4, 0x8D, 0xED, 0xA1, 0x99, 0x91, 0x31, 0x9E, 0x06, 0xFF,
                 0xC7, 0x88,
@@ -149,11 +150,9 @@ mod tests {
         {
             let mut input = &mut "1234567890".as_bytes().to_vec();
             add_padding(&mut input);
-            let hash = input
-                .chunks(16)
-                .fold(Matrix::zeros(), |acc, element| {
-                    whirlpool(acc, element.try_into().expect("Slice with incorrect size"))
-                });
+            let hash = input.chunks(16).fold(Matrix::zeros(), |acc, element| {
+                whirlpool(acc, element.try_into().expect("Slice with incorrect size"))
+            });
             let expected = [
                 0x8E, 0x65, 0x6F, 0xBC, 0xB4, 0xA3, 0xDF, 0xC4, 0xA1, 0x5F, 0x96, 0x90, 0xD2, 0xCC,
                 0x12, 0x63,
@@ -163,11 +162,9 @@ mod tests {
         {
             let mut input = &mut "Ala ma kota, kot ma ale.".as_bytes().to_vec();
             add_padding(&mut input);
-            let hash = input
-                .chunks(16)
-                .fold(Matrix::zeros(), |acc, element| {
-                    whirlpool(acc, element.try_into().expect("Slice with incorrect size"))
-                });
+            let hash = input.chunks(16).fold(Matrix::zeros(), |acc, element| {
+                whirlpool(acc, element.try_into().expect("Slice with incorrect size"))
+            });
             let expected = [
                 0x83, 0xA9, 0xFB, 0x7E, 0x22, 0x64, 0xAE, 0x75, 0x65, 0x36, 0xB5, 0x1A, 0xA5, 0xDD,
                 0x4E, 0x51,
@@ -179,11 +176,9 @@ mod tests {
                 .as_bytes()
                 .to_vec();
             add_padding(&mut input);
-            let hash = input
-                .chunks(16)
-                .fold(Matrix::zeros(), |acc, element| {
-                    whirlpool(acc, element.try_into().expect("Slice with incorrect size"))
-                });
+            let hash = input.chunks(16).fold(Matrix::zeros(), |acc, element| {
+                whirlpool(acc, element.try_into().expect("Slice with incorrect size"))
+            });
             let expected = [
                 0x2B, 0xE5, 0xCC, 0x98, 0xDC, 0xC9, 0x24, 0xC8, 0x66, 0xED, 0xCF, 0xF9, 0xD1, 0x1A,
                 0x75, 0xFB,
@@ -195,11 +190,9 @@ mod tests {
                 .as_bytes()
                 .to_vec();
             add_padding(&mut input);
-            let hash = input
-                .chunks(16)
-                .fold(Matrix::zeros(), |acc, element| {
-                    whirlpool(acc, element.try_into().expect("Slice with incorrect size"))
-                });
+            let hash = input.chunks(16).fold(Matrix::zeros(), |acc, element| {
+                whirlpool(acc, element.try_into().expect("Slice with incorrect size"))
+            });
             let expected = [
                 0xCC, 0xE8, 0x5A, 0x43, 0x1C, 0x3C, 0x2D, 0x8F, 0xC1, 0x02, 0xE4, 0x99, 0x3D, 0xFB,
                 0xD3, 0x33,
@@ -209,13 +202,13 @@ mod tests {
         {
             let mut input = &mut "a".repeat(48000).as_bytes().to_vec();
             add_padding(&mut input);
-            let hash = input.chunks(16).enumerate().fold(
-                Matrix::zeros(),
-                |acc, (i, element)| {
+            let hash = input
+                .chunks(16)
+                .enumerate()
+                .fold(Matrix::zeros(), |acc, (i, element)| {
                     println!("folding {}% {}/{}", 100 * i / (48000 / 16), i, 48000 / 16);
                     whirlpool(acc, element.try_into().expect("Slice with incorrect size"))
-                },
-            );
+                });
             let expected = [
                 0x4A, 0x07, 0x19, 0x09, 0xC7, 0xA6, 0xBD, 0x41, 0x5B, 0xB8, 0xA2, 0x41, 0x87, 0xB3,
                 0x61, 0xEB,
@@ -241,14 +234,13 @@ mod tests {
         {
             let mut input = &mut "a".repeat(48958).as_bytes().to_vec();
             add_padding(&mut input);
-            let hash =
-                input
-                    .chunks(16)
-                    .enumerate()
-                    .fold(Matrix::zeros(), |acc, (i, element)| {
-                        println!("folding {}% {}/{}", 100 * i / (48000 / 16), i, 48000 / 16);
-                        whirlpool(acc, element.try_into().expect("Slice with incorrect size"))
-                    });
+            let hash = input
+                .chunks(16)
+                .enumerate()
+                .fold(Matrix::zeros(), |acc, (i, element)| {
+                    println!("folding {}% {}/{}", 100 * i / (48000 / 16), i, 48000 / 16);
+                    whirlpool(acc, element.try_into().expect("Slice with incorrect size"))
+                });
             let expected = [
                 0x4D, 0xB0, 0x06, 0x4A, 0x8A, 0xE7, 0xE7, 0x8D, 0xDC, 0x0C, 0xC4, 0xD9, 0xD6, 0x91,
                 0xEE, 0xAE,

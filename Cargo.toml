@@ -5,6 +5,12 @@ authors = ["Stanislaw Baranski <stan@stan.bar>"]
 edition = "2018"
 default-run = "hash"
 
+[dependencies]
+rayon = "1.5"
+
+[dev-dependencies]
+criterion = "0.3.4"
+
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [[bin]]
 name = "hash"
@@ -14,9 +20,6 @@ path = "src/main.rs"
 name = "reverse-hash"
 path = "src/reverse_hash.rs"
 
-[[bin]]
-name = "reverse-hash-rayanfree"
-path = "src/reverse_hash_rayanfree.rs"
-
-[dependencies]
-rayon = "1.5"
+[[bench]]
+name = "hash"
+harness = false

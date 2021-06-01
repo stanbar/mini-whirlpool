@@ -1,3 +1,4 @@
+use std::ops::{Add, Mul};
 /// Binary Ring Polynomial element
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
 pub struct BiPoly(pub u8);
@@ -21,6 +22,10 @@ impl BiPoly {
             self.0 >> 7 & 1 == 1,
         ];
     }
+}
+
+impl Add for BiPoly {
+    type Output = BiPoly;
     /// Adding two elements in a field Z_2[x] can be done with xoring two numbers
     /// Example.
     /// 1111 + 0101
@@ -31,14 +36,17 @@ impl BiPoly {
     /// = x^3 + 0x^2 + 1x + 0
     /// = x^3 + x
     /// 1010 = 1111 ^ 0101
-    pub fn add(&self, other: &BiPoly) -> BiPoly {
-        return BiPoly(self.0 ^ other.0);
+    fn add(self, rhs: Self) -> Self::Output {
+        BiPoly(self.0 ^ rhs.0)
     }
+}
 
-    pub fn mulmod(&self, other: &BiPoly) -> BiPoly {
+impl Mul for BiPoly {
+    type Output = BiPoly;
+    fn mul(self, rhs: Self) -> Self::Output {
         // Split these u8 to array of bits
         let arr = self.to_array();
-        let brr = other.to_array();
+        let brr = rhs.to_array();
         let mut out = [false; 16];
 
         // 0xFF * 0xFF
@@ -209,3 +217,4 @@ impl BiPoly {
         )
     }
 }
+
