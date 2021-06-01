@@ -4,8 +4,6 @@
 
 Whirlpool hash function is defined over extended field `GF(2^8) = Z_2[x]/f` where `f = x^8 + x^5 + x^3 + x + 1 (0x12B)`, and smaller 4x4 state matrices.
 
-## Implementation
-I decided to implement this program https://en.wikipedia.org/wiki/Rust_(programming_language)
 ## Usage
 
 To calculate hash of some input you can either pass it as an argument
