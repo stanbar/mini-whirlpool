@@ -5,23 +5,24 @@
 Whirlpool hash function is defined over extended field `GF(2^8) = Z_2[x]/f` where `f = x^8 + x^5 + x^3 + x + 1 (0x12B)`, and smaller 4x4 state matrices.
 
 ## Usage
-
-To calculate hash of some input you can either pass it as an argument
-
-```
-cargo run <some input>
-```
-
-or pass as an stdin
+In order to compile and execute the program, Rust toolchain (cargo) needs to be installed. The easiest way to install it is through [rustup.rs](https://rustup.rs/). 
+In order to run the program in debug mode execute
 
 ```
-echo -n <some input> | cargo run
+cargo run
 ```
 
+it will expect the input string on stdin. Or just
+```
+echo -n Hello World | cargo run
+```
 
-## Example
+Alternatively the input can be passed as an argument
+```
+cargo run -- "Hello World"
+```
 
-Finding the reverses of some hashes
+In order to execute the project goal (finiding the preimages) execute
 
 ```
 cargo run --bin reverse-hash --release
