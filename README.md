@@ -4,6 +4,11 @@
 
 Whirlpool hash function is defined over extended field `GF(2^8) = Z_2[x]/f` where `f = x^8 + x^5 + x^3 + x + 1 (0x12B)`, and smaller 4x4 state matrices.
 
+## Project
+
+The goal of this project is to find a preimage for the output of the Whirlpool-like hash function. Formally, finding _x_ for defined upfront _h=H(x)_, where _H_ is a Whirpool-like hash function—modification of the original Whirlpool function.
+
+
 ## Usage
 In order to compile and execute the program, Rust toolchain (cargo) needs to be installed. The easiest way to install it is through [rustup.rs](https://rustup.rs/). 
 In order to run the program in debug mode execute
